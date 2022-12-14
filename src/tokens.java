@@ -1,9 +1,16 @@
-import io.jsonwebtoken.*;
-
-import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
-import java.security.Key;
 import java.util.Base64;
+import java.util.Date;
+import java.util.Set;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import static java.lang.Long.decode;
+
 
 public class tokens {
 
@@ -11,58 +18,75 @@ public class tokens {
 //        JSONParser parser = new J
             String part = parts[1];
             byte[] bytes = Base64.getUrlDecoder().decode(part);
+
             String decoded = new String(bytes, StandardCharsets.UTF_8);
 
-//            System.out.println(bytes[0]);
+
+
+            byte[] secretKey = Base64.getUrlDecoder().decode(parts[2]);
+            String decoded1 = new String(secretKey, StandardCharsets.UTF_8);
+//            System.out.println(decoded1);
+
+            JSONObject jsonObject = new JSONObject(decoded);
+            System.out.println(jsonObject);
             try{
-                Jwts.parser().setSigningKey(parts[2]).parseClaimsJws(parts[1]);
-                System.out.println("success");
+            if(jsonObject.getLong("exp") > (System.currentTimeMillis() / 1000))
+                System.out.println(true);
+            else
+                System.out.println(false);
             }
-            catch(ExpiredJwtException exJwt){
-                exJwt.getMessage();
+            catch (JSONException je){
+                System.out.println(false);
             }
 
-//            JsonObject payload = new JsonObject(decode());
-//            JSONParser payload = new JsonObject();
-
-//                byte[] bytes ;
-//            String decoded= Arrays.toString(Base64.getUrlDecoder().decode(token));
-//                String decoded = new String(Base64.getUrlDecoder().decode(parts));
-//                String token1 = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
-//
-//                DecodedJWT jwt = JWT.decode(token1);
-
-
-//            System.out.println("Decoded: " + decoded);
-
-
-            System.out.println(decoded);
-
-//        String decoded = new String(Base64.getUrlDecoder().decode(parts));
+//            System.out.println(decoded);
 
         }
 
-    public static Jws<Claims> parseJwt(String jwtString) {
-        String secret = "asdfSFS34wfsdfsdfSDSD32dfsddDDerQSNCK34SOWEK5354fdgdf4";
-        Key hmacKey = new SecretKeySpec(Base64.getDecoder().decode(secret),
-                SignatureAlgorithm.HS256.getJcaName());
+//    private Date getExpiredDateFromToken(String token) {
+//        String claims = Claims.getClaimsFromToken(token);
+//        return claims.getExpiration();
+//    }
+//
+//    private static String getClaimsFromToken(String token) {
+//        String expiration = Claims.EXPIRATION;
+//        return Claims.EXPIRATION;
+//
+//    }
+//    public static Exception getExpirationDateFromToken(String token) {
+//        try {
+//            Claims claims = parseJWT(token);
+//            if (claims.getExpiration().getTime() <= System.currentTimeMillis()) {
+//                return getClaimsFromToken(token).getExpiration();
+//            }
+//        }
+//        catch (Exception ex){
+//            return ex;
+//        }
+//        return null;
+//    }
 
-        Jws<Claims> jwt = Jwts.parserBuilder()
-                .setSigningKey(hmacKey)
-                .build()
-                .parseClaimsJws(jwtString);
-
-        return jwt;
-    }
 
 
-    public static void main(String args[]) {
-        String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
-        String[] parts = token.split("\\.");
-        jwt(parts);
-        Jws samle = parseJwt(token);
-        System.out.println();
-    }
+//    public static Jws<Claims> parseJwt(String jwtString) {
+//        String secret = "asdfSFS34wfsdfsdfSDSD32dfsddDDerQSNCK34SOWEK5354fdgdf4";
+//        Key hmacKey = new SecretKeySpec(Base64.getDecoder().decode(secret),
+//                SignatureAlgorithm.HS256.getJcaName());
+//
+//        Jws<Claims> jwt = Jwts.parserBuilder()
+//                .setSigningKey(hmacKey)
+//                .build()
+//                .parseClaimsJws(jwtString);
+//
+//        return jwt;
+//
+//    }
 
-}
 
+            public static void main (String args[]){
+                String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
+                String[] parts = token.split("\\.");
+                jwt(parts);
+            }
+
+        }
